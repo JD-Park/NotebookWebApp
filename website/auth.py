@@ -13,11 +13,10 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        password_hash = User.query.filter_by(password=password).first()
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()        
 
         if user:
-            if sha256_crypt.verify(password, password_hash):
+            if sha256_crypt.verify(password, user.password):
                 flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)
                 return redirect(url_for('views.home'))
@@ -56,6 +55,7 @@ def sign_up():
         elif len(password1) < 7:
             flash('Password must be at least 7 characters.', category='error')
         else:
+            sha256_crypt.hash
             new_user = User(email=email, first_name=first_name, password=sha256_crypt.hash(
                 password1))
             db.session.add(new_user)
